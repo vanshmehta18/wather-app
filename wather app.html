@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background: #e6eef5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+
+    .dashboard {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+
+    .header {
+        background: linear-gradient(to right, #4f6fdc, #5974e6);
+        color: white;
+        text-align: center;
+        padding: 25px;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .content {
+        display: flex;
+        padding: 30px;
+        gap: 30px;
+    }
+
+
+    .div1 {
+        width: 35%;
+    }
+
+    .div1 h3 {
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+  
+
+    .search-btn {
+        background: #4f6fdc;
+        color: white;
+          width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    .location-btn {
+        background: #7a838c;
+        color: white;
+          width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+
+    .div2 {
+        width: 65%;
+    }
+
+    .current-weather {
+        background: linear-gradient(to right, #4f6fdc, #5974e6);
+        color: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .current-weather h2 {
+        margin-bottom: 10px;
+    }
+
+
+
+
+    .main h2 {
+        margin-bottom: 20px;
+    }
+
+    .main-cards {
+        display: flex;
+        gap: 20px;
+    }
+
+    .card {
+        background: #6c757d;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        width: 150px;
+        text-align: center;
+        height: 180px;
+        padding-left: 22px;
+    }
+
+    .card h4 {
+        margin-bottom: 35 px;
+        font-size: 14px;
+    }
+
+
+
+    .card p {
+        font-size: 13px;
+        margin: 3px 0;
+    }
+    .sugetion{
+        width: 100%;
+        position: relative;
+    }
+    .dropdwon{
+         width: 100%;
+        background-color: #fff;
+        height: 400px;
+        position: absolute;
+        top:100px;
+       display: none;
+       
+      
+    }
+    .dropdwon div{
+            padding-top: 25px;
+    }
+    #closeBtn{
+        background-color: red;
+        border: none;
+        border: 1px solid grey;
+        color: white;
+        padding: 10px;
+        margin-left: 50px;
+    }
+</style>
+
+<body>
+
+    <div class="dashboard">
+        <div class="header">Weather Dashboard</div>
+
+        <div class="content">
+
+
+            
+<div class="div1">
+
+<h3>Enter a City Name</h3>
+
+<div class="sugetion">
+
+<input id="cityInput" type="text" placeholder="E.g., New York, London, Tokyo">
+
+
+
+<div class="dropdwon"><button id="closeBtn"  >X</button></div>
+
+</div>
+
+<button class="search-btn">Search</button>
+
+<button class="location-btn">Use Current Location</button>
+
+</div>
+            <div class="div2">
+                <div class="current-weather">
+                    <div>
+                        <h2>London (2023-06-19)</h2>
+                        <p>Temperature: 18.71°C</p>
+                        <p>Wind: 4.31 M/S</p>
+                        <p>Humidity: 76%</p>
+                    </div>
+
+                </div>
+
+                <div class="main">
+                    <h2>5-Day Forecast</h2>
+                    <div class="main-cards">
+                        <div class="card">
+                            <h4>(2023-06-20)</h4>
+
+                            <p>Temp: 17.64°C</p>
+                            <p>Wind: 0.73 M/S</p>
+                            <p>Humidity: 70%</p>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+      const apiKey ="cef01919681a7f3e984958413e83ad80";
+
+const cityinput = document.getElementById("cityInput");
+const dropdwon=document.querySelector(".dropdwon");
+const closeBtn=document.getElementById("closeBtn");
+const searchBtn=document.querySelector(".search-btn");
+
+const currentWeatherDiv=document.querySelector(".current-weather");
+const mainCards=document.querySelector(".main-cards");
+
+let lat;
+let lon;
+
+
+
+cityinput.addEventListener("input", async ()=>{
+
+let city=cityinput.value;
+
+if(city.length<2){
+dropdwon.style.display="none";
+return;
+}
+
+let url=`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}`;
+
+let res=await fetch(url);
+let data=await res.json();
+
+showCities(data);
+
+});
+
+
+function showCities(cities){
+
+dropdwon.innerHTML="";
+dropdwon.style.display="block";
+
+for(let i=0;i<cities.length;i++){
+
+let div=document.createElement("div");
+
+div.innerText=cities[i].name+ " "+cities[i].state+" "+ cities[i].country;
+
+div.addEventListener("click",()=>{
+
+cityinput.value=cities[i].name, cities[i].country;
+
+lat=cities[i].lat;
+lon=cities[i].lon;
+
+dropdwon.style.display="none";
+
+
+
+getWeather(lat,lon);
+
+});
+
+dropdwon.appendChild(div);
+
+}
+
+}
+
+
+closeBtn.addEventListener("click",()=>{
+
+dropdwon.style.display="none";
+
+});
+
+
+
+
+searchBtn.addEventListener("click",async ()=>{
+
+let city=cityinput.value;
+
+let geoUrl= `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}}`;
+
+let res=await fetch(geoUrl);
+let data=await res.json();
+
+lat=data[0].lat;
+lon=data[0].lon;
+
+getWeather(lat,lon);
+
+});
+
+
+async function getWeather(lat,lon){
+
+let url=`https:api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+let res=await fetch(url);
+let data=await res.json();
+
+showCurrentWeather(data);
+showForecast(data);
+
+}
+
+
+function showCurrentWeather(data){
+
+let city=data.city.name;
+
+let temp=data.list[0].main.temp;
+let wind=data.list[0].wind.speed;
+let humidity=data.list[0].main.humidity;
+
+let date=new Date().toISOString().split("T")[0];
+
+currentWeatherDiv.innerHTML=`
+
+<div>
+<h2>${city} (${date})</h2>
+<p>Temperature: ${temp}°C</p>
+<p>Wind: ${wind} M/S</p>
+<p>Humidity: ${humidity}%</p>
+<img src ="https://openweathermap.org/img/w/01d.png">
+</div>
+
+`;
+
+}
+
+
+
+function showForecast(data){
+
+mainCards.innerHTML="";
+
+let days=data.list.filter(item=>item.dt_txt.includes("12:00:00"));
+
+for(let i=0;i<days.length;i++){
+
+let date=days[i].dt_txt.split(" ")[0];
+let temp=days[i].main.temp;
+let wind=days[i].wind.speed;
+let humidity=days[i].main.humidity;
+let icon = days[i].weather[0].icon;
+let card=`
+
+<div class="card">
+<img src="https://openweathermap.org/img/w/${icon}.png">
+<h4>(${date})</h4>
+
+<p>Temp: ${temp}°C</p>
+<p>Wind: ${wind} M/S</p>
+<p>Humidity: ${humidity}%</p>
+
+</div>
+
+`;
+
+mainCards.innerHTML+=card;
+
+}
+
+}
+
+
+
+    </script>
+  
+</body>
+
+</html>
